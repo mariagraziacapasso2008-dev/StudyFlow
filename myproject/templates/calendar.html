@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    {% include "navbar.html" %}
+
+    <h1>📅 Calendario</h1>
+
+    <form method="POST">
+        <input type="text" name="title" placeholder="Evento" required>
+        <input type="date" name="date" required>
+        <input type="time" name="time">
+        <button type="submit">Aggiungi</button>
+    </form>
+
+    <div class="card">
+
+        {% for event in events %}
+        <div class="item">
+
+            <div>
+                <strong>📌 {{ event[1] }}</strong><br>
+                📅 {{ event[2] }}
+                {% if event[3] %}
+                    ⏰ {{ event[3] }}
+                {% endif %}
+            </div>
+
+            <small class="countdown"
+                   data-date="{{ event[2] }}"
+                   data-time="{{ event[3] }}">
+            </small>
+
+            <form method="POST" action="/delete_event/{{ event[0] }}">
+                <button type="submit">❌</button>
+            </form>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script>
+function updateCountdowns(){
+
+    const items = document.querySelectorAll(".countdown");
+
+    items.forEach(el => {
+
+        const date = el.dataset.date;
+        const time = el.dataset.time;
+
+        if(!time || time === "None"){
+            el.innerText = "";
+            return;
+        }
+
+        const eventTime = new Date(date + "T" + time + ":00");
+        const now = new Date();
+        const diff = eventTime - now;
+
+        if(diff <= 0){
+            el.innerText = "⛔ passato";
+        } else {
+            const h = Math.floor(diff / (1000*60*60));
+            const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+
+            el.innerText = "⏳ " + h + "h " + m + "m";
+        }
+    });
+}
+
+setInterval(updateCountdowns, 60000);
+updateCountdowns();
+</script>
+
+</body>
+</html>

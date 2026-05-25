@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>StudyFlow</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    {% include "navbar.html" %}
+
+    <h1>📚 Le tue Task</h1>
+
+    <form method="POST" action="/add">
+        <input type="text" name="task" placeholder="Nuova task..." required>
+        <button type="submit">Aggiungi</button>
+    </form>
+
+    <div class="card">
+        {% for task in tasks %}
+        <div class="item">
+            <span>{{ task[1] }}</span>
+
+            <form method="POST" action="/delete/{{ task[0] }}">
+                <button type="submit">❌</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+</body>
+</html>
